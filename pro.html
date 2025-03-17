@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <link rel="stylesheet" href="pro.css">
+</head>
+<body>
+    <div class="event-container">
+        <h1 id="event-title">Fountains of Hope & Grains of Life</h1>
+        <p id="event-description"> A fundraising iftar to bring hope and nourishment to those in need. Join us for an evening of community, reflection, and a charitable cause supporting the less fortunate.
+        </p>
+        <p id="event-status">Status: <span id="status-text">Loading...</span></p>
+        <div id="event-actions">
+            <!-- Content will be dynamically inserted here by JavaScript -->
+        </div>
+        <div id="feedback-section" style="display: none;">
+            <h2>Feedback from Attendees</h2>
+            <ul id="feedback-list"></ul>
+            <!-- Feedback submission form -->
+            <form id="feedback-form">
+                <label for="feedback-input">Add Your Feedback:</label>
+                <textarea id="feedback-input" name="feedback" required></textarea>
+                <button type="submit">Submit Feedback</button>
+            </form>
+        </div>
+        <div id="apply-form" style="display: none;">
+            <h2>Apply to Event</h2>
+            <form id="application-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+                <button type="submit">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="pro.js"></script>
+</body>
+</html>
