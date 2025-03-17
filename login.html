@@ -1,26 +1,127 @@
-<!-- Login Page -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Improved Layout</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('images/WhatsApp Image 2025-03-17 at 15.58.03_05fed068.jpg') no-repeat center center/cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 450px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .card h2 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: #000;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 18px;
+            transition: 0.3s;
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            display: block;
+            margin-top: 15px;
+        }
+
+        .text-link:hover {
+            text-decoration: underline;
+            color: #00bfff;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <label>Email:</label>
-        <input type="email" id="loginEmail" required>
 
-        <label>Password:</label>
-        <input type="password" id="loginPassword" required>
+    <div class="card">
+        <h2>Welcome Back!</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="email" id="loginEmail" class="form-control" placeholder="Email Address" required>
+                <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+            <a href="register.html" class="text-link">Don't have an account? Create one</a>
+        </form>
+    </div>
 
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="register.html">Register</a></p>
+    <script src="js/bootstrap.bundle.min.js"></script>
     <script src="auth.js"></script>
+
 </body>
 
 </html>
