@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (user && user.email === email && user.password === password) {
                 // Transfer user data to sessionStorage after successful login
                 sessionStorage.setItem("loggedInUser", JSON.stringify(user));
-                window.location.href = "profile.html";
+                window.location.href = "index.html";
             } else {
                 alert("Invalid credentials");
             }
