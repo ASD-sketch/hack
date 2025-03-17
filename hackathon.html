@@ -34,60 +34,36 @@
 
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <nav class="navbar navbar-expand-lg bg-barren barren-head navbar fixed-top justify-content-sm-start pt-0 pb-0">
-                <div class="container">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                        <span class="navbar-toggler-icon">
-                            <i class="fa-solid fa-bars"></i>
-                        </span>
-                    </button>
-                    <a class="navbar-brand order-1 order-lg-0 ml-lg-0 ml-2 me-auto" href="404.html">
-                        <div class="res-main-logo">
-                            <img src="events/assets/images/HHRDLogo.png" alt="">
-                        </div>
-                        
-                        <div class="main-logo" id="logo">
-                            <img src="events/assets/images/HHRDLogo.png" alt="">
-                            <img class="logo-inverse" src="events/assets/images/HHRDLogo.png" alt="">
-                        </div>
-                    </a>
-                    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-                        <div class="offcanvas-header">
-                            <div class="" id="offcanvasNavbarLabel" style="height: 50px; object-fit: cover; ">
-                                <img src="events/assets/images/HHRDLogo.png" alt="">
-                            </div>
-                            <button type="button" class="close-btn" data-bs-dismiss="offcanvas" aria-label="Close">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="offcanvas-body">
-                          
-                            <ul class="navbar-nav justify-content-end flex-grow-1 pe_5">
-                                <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="https://www.hhrd.org/">Home</a>
-                                </li>
-                                
+    <header class="main-header">
+		<div class="header-sticky">
+			<nav class="navbar navbar-expand-lg">
+				<div class="container">
+					
+					<a class="navbar-brand" href="index-2.html">
+						<img src="images/logo.svg" alt="Logo">
+					</a>
+
+					
+					<div class="collapse navbar-collapse main-menu">
+                        <div class="nav-menu-wrapper">
+                            <ul class="navbar-nav mr-auto" id="menu">
+                                <li class="nav-item"><a class="nav-link" href="index.html">Home</a>
+                                   
+                                </li>                                
+                                <li class="nav-item"><a class="nav-link" href="about.html">About Us</a>
+                                <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                                <li class="nav-item"><a class="nav-link" href="">Events</a></li>                       
                             </ul>
                         </div>
-                        <div class="offcanvas-footer">
-                            <div class="offcanvas-social">
-                                <h5>Follow Us</h5>
-                                <ul class="social-links">
-                                    <li><a href="http://www.facebook.com/helpinghandusa" class="social-link" target="_blank"><i class="fab fa-facebook-square"></i></a>
-                                    <li><a href="https://www.instagram.com/helpinghandusa/" class="social-link" target="_blank"><i class="fab fa-instagram"></i></a>
-                                    <li><a href="http://twitter.com/HelpingHandUSA" class="social-link" target="_blank"><i class="fab fa-twitter"></i></a>
-                                    <li><a href="http://www.youtube.com/user/HelpingHandUSA#p/u/0/V92m5fNlMt0" class="social-link" target="_blank"><i class="fab fa-youtube"></i></a>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-            <div class="overlay"></div>
-        </div>
-    </header>
+                        
+					</div>
+					
+					<div class="navbar-toggle"></div>
+				</div>
+			</nav>
+			<div class="responsive-menu"></div>
+		</div>
+	</header>
     
     <div class="event-dt-block p-80">
         <div class="container body-content">
@@ -329,20 +305,105 @@
 
         </div>
         </div>
-        <footer class="footer mt-auto">
-            <div class="footer-bottom">
+        <footer class="main-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="main-footer-box">
+                            <div class="footer-about">
+                                
+                                <div class="footer-logo">
+                                    <img src="images/footer-logo.svg" alt="">
+                                </div>
+                                
+                                
+                                <div class="footer-contact-detail">
+                                    <div class="footer-contact-item">
+                                        <p>Toll free customer care</p>
+                                        <h3><a href="tel:+123456789">+123 456 789</a></h3>
+                                    </div>
+                                    
+                                    <div class="footer-contact-item">
+                                        <p>Need live support!</p>
+                                        <h3><a href="mailto:info@domainname.com">info@domainname.com</a></h3>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <div class="footer-social-links">
+                                    <h3>Follow on</h3>
+                                    <ul>
+                                        <li><a href="#"><i class="fa-brands fa-pinterest-p"></i></a></li>
+                                        <li><a href="#"><i class="fa-brands fa-x-twitter"></i></a></li>
+                                        <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>                                    								
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                            
+    
+                            
+                            <div class="footer-links-box">
+                                
+                                <div class="newsletter-form">
+                                    <form id="newsletterForm" action="#" method="POST">
+                                        <div class="form-group">
+                                            <input type="email" name="email" class="form-control" id="mail" placeholder="Enter Your Email" required="">
+                                            <button type="submit" class="newsletter-btn"><i class="fa-regular fa-paper-plane"></i></button>
+                                        </div>
+                                    </form>
+                                </div>
+    
+                                <div class="footer-links">
+                                    <h3>Quick link</h3>
+                                    <ul>
+                                        <li><a href="index.html">home</a></li>
+                                        <li><a href="about.html">about us</a></li>
+                                        <li><a href="services.html">services</a></li>
+                                        <li><a href="blog.html">blog</a></li>
+                                    </ul>
+                                </div>
+                                <div class="footer-links footer-service-links">
+                                    <h3>services</h3>
+                                    <ul>
+                                        <li><a href="service-single.html">food security initiatives</a></li>
+                                        <li><a href="service-single.html">healthcare access</a></li>
+                                        <li><a href="service-single.html">educational support</a></li>
+                                        <li><a href="service-single.html">youth development</a></li>
+                                    </ul>
+                                </div>
+    
+                                <div class="footer-links">
+                                    <h3>support</h3>
+                                    <ul>
+                                        <li><a href="#">help</a></li>
+                                        <li><a href="#">privacy policy</a></li>
+                                        <li><a href="#">term's & condition</a></li>
+                                        <li><a href="#">support</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            
+            <div class="footer-copyright">
                 <div class="container">
                     <div class="row">
-                        <div class="col-12">
-                            <div class="footer-copyright-text">
-                                <p class="mb-0">&copy; 2025, <strong>HHRD</strong>. All rights reserved. </p>
+                        <div class="col-md-12">
+                            
+                            <div class="copyright-text">
+                                <p>Copyright © 2025 All Rights Reserved.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </footer>
-      
 
         
      
