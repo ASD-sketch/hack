@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadan Tents Map</title>
+    <link rel="icon" href="data:;base64,=">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; font-family: 'Arial', sans-serif; }
+        #map { height: 100vh; width: 100%; }
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 600px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #007bff;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        #search-input:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 8px rgba(40,167,69,0.2);
+        }
+        #locate-btn {
+            background: #28a745;
+            padding: 12px 18px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .leaflet-popup-content {
+            min-width: 250px;
+        }
+        .tent-details {
+            margin: 10px 0;
+        }
+        .tent-details p {
+            margin: 8px 0;
+            color: #333;
+        }
+        .nav-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-controls">
+        <input type="text" id="search-input" placeholder="Search Ramadan tents...">
+        <button id="locate-btn">📍 My Location</button>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+       const MAP_CENTER = [32.5555, 35.8500]; 
+const ZOOM_LEVEL = 13;
+
+        const STORAGE_KEY = 'ramadanTents';
+        
+        let map = L.map('map').setView(MAP_CENTER, ZOOM_LEVEL);
+        let currentMarkers = [];
+        let routingControl = null;
+        let userLocation = null;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        const tentIcon = L.divIcon({
+            html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#28a745">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>`,
+            iconSize: [32, 32]
+        });
+
+      
+const initialTents = [
+    {
+        name: "Al-Hussain Tent - Irbid",
+        location: "City Center",
+        lat: 32.5555,
+        lng: 35.8500,
+        capacity: 80,
+        meals: "Iftar & Suhoor",
+        contact: "00962777785218",
+        organizer: "Al-Hussain Charity"
+    },
+    // New Irbid Tents
+    {
+        name: "Irbid City Tent",
+        location: "Downtown Irbid",
+        lat: 32.5512,
+        lng: 35.8578,
+        capacity: 120,
+        meals: "Iftar & Suhoor",
+        contact: "00962777785218",
+        organizer: "Irbid Municipality"
+    },
+    {
+        name: "Al-Huson Charity Tent",
+        location: "Al-Huson District",
+        lat: 32.5678,
+        lng: 35.7356,
+        capacity: 150,
+        meals: "Iftar only",
+        contact: "00962777785218",
+        organizer: "Huson Charity Society"
+    },
+    {
+        name: "Al-Ramtha Ramadan Tent",
+        location: "Al-Ramtha City",
+        lat: 32.5175,
+        lng: 36.0047,
+        capacity: 200,
+        meals: "Iftar & Suhoor",
+        contact: "00962777785218",
+        organizer: "Ramtha Volunteers"
+    },
+    {
+        name: "Yarmouk University Tent",
+        location: "University Street",
+        lat: 32.5314,
+        lng: 35.8511,
+        capacity: 300,
+        meals: "Iftar only",
+        contact: "00962777785218",
+        organizer: "Yarmouk Student Union"
+    },
+    {
+        name: "Irbid Youth Tent",
+        location: "Youth City Complex",
+        lat: 32.5432,
+        lng: 35.8600,
+        capacity: 100,
+        meals: "Suhoor only",
+        contact: "00962777785218",
+        organizer: "Irbid Youth Council"
+    }
+];
+
+
+        if(!localStorage.getItem(STORAGE_KEY)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialTents));
+        }
+
+        let tents = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+        function initMap() {
+            currentMarkers.forEach(marker => map.removeLayer(marker));
+            currentMarkers = [];
+
+            tents.forEach(tent => {
+                const marker = L.marker([tent.lat, tent.lng], {icon: tentIcon})
+                    .addTo(map)
+                    .bindPopup(`
+                        <div class="tent-details">
+                            <h3>${tent.name}</h3>
+                            <p><strong>Location:</strong> ${tent.location}</p>
+                            <p><strong>Capacity:</strong> ${tent.capacity} people/day</p>
+                            <p><strong>Meal Times:</strong> ${tent.meals}</p>
+                            <p><strong>Contact:</strong> ${tent.contact}</p>
+                            <p><strong>Organizer:</strong> ${tent.organizer}</p>
+                            <button class="nav-button" onclick="window.open(
+                                'https://www.google.com/maps/dir/?api=1&destination=${tent.lat},${tent.lng}'
+                            )">Navigate via Google Maps</button>
+                        </div>
+                    `);
+                currentMarkers.push(marker);
+            });
+        }
+
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredTents = tents.filter(tent => 
+                tent.name.toLowerCase().includes(searchTerm) ||
+                tent.location.toLowerCase().includes(searchTerm)
+            );
+            
+            currentMarkers.forEach(marker => map.removeLayer(marker));
+            currentMarkers = [];
+            
+            filteredTents.forEach(tent => {
+                const marker = L.marker([tent.lat, tent.lng], {icon: tentIcon})
+                    .addTo(map)
+                    .bindPopup(/* same popup content as above */);
+                currentMarkers.push(marker);
+            });
+        });
+
+        
+        document.getElementById('locate-btn').addEventListener('click', () => {
+            navigator.geolocation.getCurrentPosition(pos => {
+                userLocation = [pos.coords.latitude, pos.coords.longitude];
+                map.setView(userLocation, 15);
+                L.marker(userLocation, {
+                    icon: L.divIcon({className: 'user-location-marker'})
+                }).addTo(map);
+            }, error => {
+                alert('Please enable location services to use this feature.');
+            });
+        });
+
+        initMap();
+    </script>
+</body>
+</html>  

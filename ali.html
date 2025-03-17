@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Charity Events - Navigation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Leaflet Routing Machine CSS & JS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+  />
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+  <!-- Leaflet Rotated Marker plugin (for rotating the user arrow) -->
+  <script src="https://rawcdn.githack.com/bbecquet/Leaflet.RotatedMarker/master/leaflet.rotatedMarker.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+      width: 80%;
+      justify-content: space-between;
+      z-index: 1000;
+    }
+    #destination-input {
+      width: 45%;
+      padding: 5px;
+      font-size: 14px;
+      border: none;
+      outline: none;
+    }
+    #start-navigation,
+    #stop-navigation,
+    #locate-me {
+      padding: 5px 10px;
+      background: blue;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 5px;
+    }
+    #next-instruction {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: center;
+      display: none;
+      width: 80%;
+      z-index: 1000;
+    }
+    #suggestions {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+      width: 80%;
+      z-index: 1000;
+      display: none;
+    }
+    #suggestions div {
+      cursor: pointer;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc;
+    }
+    .event-popup {
+      text-align: center;
+    }
+    .event-popup button {
+      padding: 5px 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .event-popup button.navigate {
+      background: blue;
+      color: white;
+    }
+    .event-popup button.details {
+      background: green;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Controls -->
+  <div id="controls">
+    <input
+      type="text"
+      id="destination-input"
+      placeholder="Search for a charity event..."
+    />
+    <button id="start-navigation">Start</button>
+    <button id="stop-navigation">Stop</button>
+    <button id="locate-me">📍 My Location</button>
+  </div>
+
+  <!-- Search suggestions -->
+  <div id="suggestions"></div>
+
+  <!-- The map -->
+  <div id="map"></div>
+
+  <!-- Next instruction display -->
+  <div id="next-instruction">Instructions will appear here...</div>
+
+  <script>
+    /*************************************
+     * 1) Global variables
+     *************************************/
+    let map, userMarker, userLocation;
+    let speechSynthesisAPI = window.speechSynthesis;
+
+    // We'll keep the language in English for instructions
+    let voiceLanguage = "en-US";
+
+    let nextInstruction = document.getElementById("next-instruction");
+    let suggestionsDiv = document.getElementById("suggestions");
+
+    /*************************************
+     * 2) Initialize the map
+     *************************************/
+    map = L.map("map").setView([31.963158, 35.930359], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    /*************************************
+     * 3) Example Charity Events
+     *************************************/
+    let events = [
+      {
+        name: "Ramadan Food Distribution",
+        lat: 31.9496,
+        lng: 35.8934,
+        type: "Food Distribution",
+        status: "Ongoing",
+        distance: "5 km",
+        time: "10 min",
+      },
+      {
+        name: "Health Campaign",
+        lat: 31.9158,
+        lng: 35.8562,
+        type: "Health Screening",
+        status: "Upcoming",
+        distance: "8 km",
+        time: "15 min",
+      },
+      {
+        name: "Charity School Supplies",
+        lat: 31.9784,
+        lng: 35.8554,
+        type: "Donations",
+        status: "Ongoing",
+        distance: "12 km",
+        time: "20 min",
+      },
+      {
+        name: "Irbid Volunteer Meetup",
+        lat: 32.5353,
+        lng: 35.8516,
+        type: "Volunteering",
+        status: "Ongoing",
+        distance: "25 km",
+        time: "30 min",
+      },
+      {
+        name: "Clean Up Campaign",
+        lat: 32.5451,
+        lng: 35.8577,
+        type: "Environmental",
+        status: "Upcoming",
+        distance: "30 km",
+        time: "35 min",
+      },
+    ];
+
+    // Add markers for events
+    events.forEach((event) => {
+      let marker = L.marker([event.lat, event.lng], {
+        icon: L.icon({
+          iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png", // يمكنك استبدال الأيقونة هنا
+          iconSize: [40, 40],
+          className: "event-marker",
+        }),
+      }).addTo(map);
+
+      // Show event name above the marker
+      marker.bindTooltip(event.name, { permanent: true, direction: "top" });
+
+      // Popup with event details
+      marker.bindPopup(`
+        <div class="event-popup">
+          <h3>${event.name}</h3>
+          <p>Event Type: ${event.type}</p>
+          <p>Status: ${event.status}</p>
+          <p>Distance: ${event.distance}</p>
+          <p>Estimated Time: ${event.time}</p>
+          <button class="navigate" onclick="navigateToEvent(${event.lat}, ${event.lng})">🚗 Navigate</button>
+          <button class="details" onclick="showEventDetails('${event.name}')">ℹ️ More Info</button>
+        </div>
+      `);
+    });
+
+    /*************************************
+     * 4) Navigate to event in Google Maps
+     *************************************/
+    function navigateToEvent(lat, lng) {
+      // Open Google Maps and navigate directly to the event location
+      let googleMapsURL = `https://www.google.com/maps?q=${lat},${lng}&zoom=15&viewpoint=auto`;
+      window.location.href = googleMapsURL; // This will open Google Maps and navigate to the location
+    }
+
+    /*************************************
+     * 5) Show event details
+     *************************************/
+    function showEventDetails(name) {
+      let event = events.find((e) => e.name === name);
+      if (event) {
+        alert(`Event Details:
+Name: ${event.name}
+Event Type: ${event.type}
+Status: ${event.status}
+Distance: ${event.distance}
+Estimated Time: ${event.time}`);
+      }
+    }
+
+    /*************************************
+     * 6) Locate me button
+     *************************************/
+    document.getElementById("locate-me").addEventListener("click", function () {
+      if (userLocation) {
+        map.setView(userLocation, 15);
+      } else {
+        alert("Location not found yet!");
+      }
+    });
+
+    /*************************************
+     * 7) Search suggestions
+     *************************************/
+    document
+      .getElementById("destination-input")
+      .addEventListener("input", function () {
+        let query = this.value;
+        if (query.length > 2) {
+          fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+            .then((response) => response.json())
+            .then((data) => {
+              suggestionsDiv.innerHTML = "";
+              data.forEach((item) => {
+                let suggestion = document.createElement("div");
+                suggestion.innerText = item.display_name;
+                suggestion.addEventListener("click", () => {
+                  document.getElementById("destination-input").value = item.display_name;
+                  suggestionsDiv.style.display = "none";
+                  navigateToEvent(item.lat, item.lon);
+                });
+                suggestionsDiv.appendChild(suggestion);
+              });
+              suggestionsDiv.style.display = "block";
+            });
+        } else {
+          suggestionsDiv.style.display = "none";
+        }
+      });
+
+    /*************************************
+     * 8) Start navigation button
+     *************************************/
+    document.getElementById("start-navigation").addEventListener("click", function () {
+      let input = document.getElementById("destination-input").value.trim();
+      if (input === "") {
+        alert("Please enter a destination.");
+        return;
+      }
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${input}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.length > 0) {
+            let lat = data[0].lat;
+            let lon = data[0].lon;
+            navigateToEvent(lat, lon);
+          } else {
+            alert("No results found.");
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    });
+  </script>
+</body>
+</html>
